@@ -26,7 +26,7 @@ const lightTheme = EditorView.theme({
   },
 });
 
-const languageExtensions: { [key: string]: any } = {
+const languageExtensions = {
   python: python(),
   javascript: javascript(),
   cpp: cpp(),
@@ -35,19 +35,11 @@ const languageExtensions: { [key: string]: any } = {
   php: php(),
 };
 
-interface CodeMirrorEditorProps {
-  language: string;
-  onOutputChange?: (output: string) => void;
-}
-
-const CodeMirrorEditor: React.FC<CodeMirrorEditorProps> = ({ 
-  language, 
-  onOutputChange 
-}) => {
-  const editorRef = useRef<HTMLDivElement>(null);
+const CodeMirrorEditor = ({ language, onOutputChange }) => {
+  const editorRef = useRef(null);
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [code, setCode] = useState("");
-  const [view, setView] = useState<EditorView | null>(null);
+  const [view, setView] = useState(null);
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
@@ -71,7 +63,7 @@ const CodeMirrorEditor: React.FC<CodeMirrorEditorProps> = ({
         extensions: [
           selectedLanguage,
           selectedTheme,
-          autocompletion(), // Adding the autocompletion extension here
+          autocompletion(),
           keymap.of([]),
           EditorView.updateListener.of((update) => {
             if (update.docChanged) {
@@ -98,7 +90,6 @@ const CodeMirrorEditor: React.FC<CodeMirrorEditorProps> = ({
       const selectedTheme = newMode ? oneDark : lightTheme;
       const selectedLanguage = languageExtensions[language] || javascript();
 
-      // Create a new EditorState with the new theme and language
       const newState = EditorState.create({
         extensions: [
           selectedLanguage,
@@ -108,7 +99,6 @@ const CodeMirrorEditor: React.FC<CodeMirrorEditorProps> = ({
         ],
       });
 
-      // Update the view's state with the new state
       view.setState(newState);
     }
   };
